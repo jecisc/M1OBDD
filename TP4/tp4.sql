@@ -24,6 +24,7 @@ ALTER TABLE Mot_Composant ADD
 
 -- Question 2
 
+-- Find the id, if none, create and return it.
 create or replace FUNCTION ID_ACROSTICHE (LOCU IN VARCHAR2, LANGU IN VARCHAR2) RETURN NUMBER AS 
   res number;
 BEGIN
@@ -40,6 +41,7 @@ BEGIN
   RETURN res;
 END ID_ACROSTICHE;
 
+--Autonomous function to create an acrostiche entry
 create or replace function insert_acro(LOCUTION IN VARCHAR2, LANG IN VARCHAR2 ) RETURN NUMBER IS
 PRAGMA AUTONOMOUS_TRANSACTION;
 BEGIN
@@ -48,6 +50,7 @@ BEGIN
  RETURN 1;
 END;
 
+--Create a new acrostiche and return the id
 create or replace FUNCTION CALC_ACRO (LOCU IN VARCHAR2, LANGU IN VARCHAR2 ) RETURN NUMBER AS 
   id number;
   test varchar2(40);
@@ -65,6 +68,7 @@ BEGIN
   RETURN id;
 END CALC_ACRO;
 
+--Autonomous function to insert a word for a letter
 create or replace function insert_mot(ID_ACRO IN number, LOCUTION IN VARCHAR2, POS IN number) RETURN NUMBER IS
 PRAGMA AUTONOMOUS_TRANSACTION;
 BEGIN
@@ -73,6 +77,7 @@ BEGIN
  RETURN 1;
 END;
 
+-- Find a word for a letter and insert it
 create or replace FUNCTION GENERE_MOT_IN_TABLE (LETTER IN VARCHAR2, POS IN NUMBER, LANGU IN VARCHAR2, ID_ACR IN NUMBER ) RETURN VARCHAR2 AS 
   TYPE char_tab IS TABLE OF VARCHAR2(1) INDEX BY BINARY_INTEGER;
   expression VARCHAR2(30) := CONCAT('^',LETTER);
@@ -88,6 +93,7 @@ create or replace FUNCTION GENERE_MOT_IN_TABLE (LETTER IN VARCHAR2, POS IN NUMBE
   RETURN res.mot;
 END GENERE_MOT_IN_TABLE;
 
+-- Test which is usable :)
 set serveroutput on;
 select ID_ACROSTICHE('Anticonstitutionnellement', 'FR') from dual;
 
