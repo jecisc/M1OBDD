@@ -41,11 +41,19 @@ BEGIN
   RETURN res;
 END ID_ACROSTICHE;
 
+create or replace function insert_acro(LOCUTION IN VARCHAR2, LANG IN VARCHAR2 ) RETURN NUMBER IS
+PRAGMA AUTONOMOUS_TRANSACTION;
+BEGIN
+  INSERT INTO Acrostiches (locution, lang) VALUES (LOCUTION, LANG);
+ COMMIT;
+ RETURN 1;
+END;
+
 create or replace FUNCTION CALC_ACRO (LOCUTION IN VARCHAR2, LANG IN VARCHAR2 ) RETURN NUMBER AS 
   id number;
   test varchar2(40);
 BEGIN
-  INSERT INTO Acrostiches (locution, lang) VALUES (LOCUTION, LANG);
+  id := insert_acro(LOCUTION, LANG);
   
   SELECT id_acro INTO id
   FROM Acrostiches
@@ -58,6 +66,14 @@ BEGIN
   RETURN id;
 END CALC_ACRO;
 
+create or replace function insert_mot(ID_ACRO IN number, LOCUTION IN VARCHAR2, POS IN number) RETURN NUMBER IS
+PRAGMA AUTONOMOUS_TRANSACTION;
+BEGIN
+  INSERT INTO MOT_COMPOSANT (id_acro, mot, position) VALUES (ID_ACRO, LOCUTION, POS);
+ COMMIT;
+ RETURN 1;
+END;
+
 create or replace FUNCTION GENERE_MOT_IN_TABLE (LETTER IN VARCHAR2, POS IN NUMBER, LANG IN VARCHAR2, ID_ACRO IN NUMBER ) RETURN VARCHAR2 AS 
   TYPE char_tab IS TABLE OF VARCHAR2(1) INDEX BY BINARY_INTEGER;
   expression VARCHAR2(30) := CONCAT('^',LETTER);
@@ -65,10 +81,11 @@ create or replace FUNCTION GENERE_MOT_IN_TABLE (LETTER IN VARCHAR2, POS IN NUMBE
   WHERE  REGEXP_LIKE (mot, expression) AND adjectifs.lang = LANG
   ORDER BY DBMS_RANDOM.RANDOM;
   res c_mots%ROWTYPE;
+  exit number;
   BEGIN
     OPEN c_mots;
     FETCH c_mots INTO res;
-    INSERT INTO MOT_COMPOSANT (id_acro, mot, position) VALUES (id_acro, res.mot, POS);
+    exit:= insert_mot(id_acro, res.mot, POS);
   RETURN res.mot;
 END GENERE_MOT_IN_TABLE;
 
