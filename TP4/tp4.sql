@@ -26,17 +26,17 @@ ALTER TABLE Mot_Composant ADD
 
 -- Find the id, if none, create and return it.
 create or replace FUNCTION ID_ACROSTICHE (LOCU IN VARCHAR2, LANGU IN VARCHAR2) RETURN NUMBER AS 
+  locuLower VARCHAR2(40);
   res number;
 BEGIN
-  dbms_output.put_line('pre-caca');
   BEGIN
+  locuLower := lower(LOCU);
   SELECT ID_ACRO INTO res
   FROM ACROSTICHES
-  WHERE LOCU = ACROSTICHES.LOCUTION AND LANGU = ACROSTICHES.LANG;
+  WHERE locuLower = ACROSTICHES.LOCUTION AND LANGU = ACROSTICHES.LANG;
   EXCEPTION
-      WHEN NO_DATA_FOUND THEN
-         dbms_output.put_line('caca');
-         res := calc_acro(LOCU, LANGU);
+      WHEN NO_DATA_FOUND THEN 
+         res := calc_acro(locuLower, LANGU);
     END;
   RETURN res;
 END ID_ACROSTICHE;

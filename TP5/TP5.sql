@@ -16,7 +16,6 @@ x NUMBER;
 begin
 select prenom bulk collect into prenoms from prenom where prenom.genre = 'Garçon';
 for i in prenoms.first..prenoms.last loop
-   dbms_output.put_line(prenoms(i));
    x := ID_ACROSTICHE(prenoms(i), 'FR');
    x := ID_ACROSTICHE(prenoms(i), 'EN');
 end loop;
@@ -36,3 +35,5 @@ end loop;
 end;
 
 -- Question 2
+
+
