@@ -37,3 +37,13 @@ end;
 -- Question 2
 
 
+set autotrace on;
+
+select * from mot_composant;
+
+-- Question 3
+CREATE INDEX adj_mot ON adjectifs(mot)
+      TABLESPACE users
+      STORAGE (INITIAL 20K
+      NEXT 20k
+      PCTINCREASE 75);
